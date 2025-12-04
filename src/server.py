@@ -5,30 +5,47 @@ import os
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
+
 import utils.gmail_utils as gmail_utils
 from tools import (
-    send_email, create_draft, read_email, search_emails, delete_email,
-    modify_label, create_label_tool, delete_label_tool, list_labels_tool,
-    get_or_create_label_tool, update_label_tool, find_label_by_name_tool
+    # 読み取り専用ツールのみインポート（送信・削除は無効化）
+    # send_email,  # 無効化
+    # create_draft,  # 無効化
+    read_email,
+    search_emails,
+    # delete_email,  # 無効化
+    modify_label,
+    create_label_tool,
+    delete_label_tool,
+    list_labels_tool,
+    get_or_create_label_tool,
+    update_label_tool,
+    find_label_by_name_tool,
 )
 
 # 設定
 BASE_DIR = Path(__file__).resolve().parent.parent
 CREDENTIALS_DIR = BASE_DIR / "credentials"
-OAUTH_KEYS = os.getenv("GMAIL_OAUTH_PATH", str(CREDENTIALS_DIR / "client_secret_gmail_oauth.json"))
-CRED_PATH = os.getenv("GMAIL_CREDENTIALS_PATH", str(CREDENTIALS_DIR / "credentials.json"))
-SCOPES = ["https://www.googleapis.com/auth/gmail.modify"]
+OAUTH_KEYS = os.getenv(
+    "GMAIL_OAUTH_PATH", str(CREDENTIALS_DIR / "client_secret_gmail_oauth.json")
+)
+CRED_PATH = os.getenv(
+    "GMAIL_CREDENTIALS_PATH", str(CREDENTIALS_DIR / "credentials.json")
+)
+# 読み取り専用スコープに変更
+SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
+
 
 def create_server() -> FastMCP:
-    """MCP サーバーの作成とツール登録"""
+    """MCP サーバーの作成とツール登録（読み取り専用）"""
     server = FastMCP("gmail", version="1.0.1")
-    
-    # ツール登録
-    server.tool()(send_email)
-    server.tool()(create_draft)
+
+    # 読み取り専用ツールのみ登録
+    # server.tool()(send_email)  # 無効化
+    # server.tool()(create_draft)  # 無効化
     server.tool()(read_email)
     server.tool()(search_emails)
-    server.tool()(delete_email)
+    # server.tool()(delete_email)  # 無効化
     server.tool()(modify_label)
     server.tool()(create_label_tool)
     server.tool()(delete_label_tool)
@@ -36,7 +53,7 @@ def create_server() -> FastMCP:
     server.tool()(get_or_create_label_tool)
     server.tool()(update_label_tool)
     server.tool()(find_label_by_name_tool)
-    
+
     return server
 
 def init_gmail_credentials():
