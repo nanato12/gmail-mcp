@@ -36,9 +36,14 @@ CRED_PATH = os.getenv(
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 
-def create_server() -> FastMCP:
-    """MCP サーバーの作成とツール登録（読み取り専用）"""
-    server = FastMCP("gmail", version="1.0.1")
+def create_server(host: str = "127.0.0.1", port: int = 3001) -> FastMCP:
+    """MCP サーバーの作成とツール登録（読み取り専用）
+
+    Args:
+        host: サーバーホスト（デフォルト: 127.0.0.1）
+        port: サーバーポート（デフォルト: 3001）
+    """
+    server = FastMCP("gmail", host=host, port=port)
 
     # 読み取り専用ツールのみ登録
     # server.tool()(send_email)  # 無効化

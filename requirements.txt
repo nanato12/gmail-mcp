@@ -19,7 +19,7 @@ httpx==0.28.1
 httpx-sse==0.4.0
 idna==3.10
 markdown-it-py==3.0.0
-mcp==1.7.1
+mcp>=1.23.0
 mdurl==0.1.2
 oauthlib==3.2.2
 proto-plus==1.26.1
@@ -44,7 +44,7 @@ sse-starlette==2.3.4
 starlette==0.46.2
 typer==0.15.3
 typing-extensions==4.13.2
-typing-inspection==0.4.0
+typing-inspection>=0.4.1
 uritemplate==4.1.1
 urllib3==2.4.0
 uvicorn==0.34.2 

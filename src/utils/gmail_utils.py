@@ -36,8 +36,18 @@ def load_credentials(config_path: str, cred_path: str, oauth_path: str, scopes: 
         else:
             # トークン情報がないか期限切れで、リフレッシュトークンがない場合は認証サーバーにアクセスして認証
             flow = InstalledAppFlow.from_client_secrets_file(oauth_path, scopes)
-            # 認証サーバーにアクセスして認証
-            creds = flow.run_local_server(port=8080, access_type='offline', prompt='consent')
+            # Docker環境ではopen_browser=Falseでリダイレクト方式を使用
+            # host='localhost': リダイレクトURIに使用（Google OAuth設定と一致）
+            # bind_addr='0.0.0.0': コンテナ外からアクセス可能にする
+            auth_port = int(os.getenv("AUTH_PORT", "8080"))
+            creds = flow.run_local_server(
+                host="localhost",
+                bind_addr="0.0.0.0",
+                port=auth_port,
+                open_browser=False,
+                access_type='offline',
+                prompt='consent'
+            )
         with open(cred_path, "w") as token:
             token.write(creds.to_json())
     global service
